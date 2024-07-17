@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Reservations</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'homepage' %}">Car Rental</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            
+            <ul class="navbar-nav ml-auto">
+                {% if request.user.is_superuser %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'manage_cars' %}">Manage Cars</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'view_reservations' %}">View Reservations</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <form method="post" action="{% url 'logout' %}" class="form-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger">Logout</button>
+                    </form>
+                </li>
+            </ul>
+            
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="text-center">View Reservations</h1>
+        <p>Total Price: RM {{ total_price_sum }}</p>
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>User</th>
+                    <th>Car</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Total Price (RM)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservation in reservations %}
+                <tr>
+                    <td>{{ reservation.user.username }}</td>
+                    <td>{{ reservation.car }}</td>
+                    <td>{{ reservation.start_date }}</td>
+                    <td>{{ reservation.end_date }}</td>
+                    <td>{{ reservation.total_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

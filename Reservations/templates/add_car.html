@@ -1,0 +1,81 @@
+<!-- rental/templates/add_car.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Car</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="{% url 'homepage' %}">Car Rental</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        
+        <ul class="navbar-nav ml-auto">
+            {% if request.user.is_superuser %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'manage_cars' %}">Manage Cars</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'view_reservations' %}">View Reservations</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <form method="post" action="{% url 'logout' %}" class="form-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">Logout</button>
+                </form>
+            </li>
+        </ul>
+        
+    </div>
+</nav>
+<div class="container">
+    <h2>Add Car</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="brand">Brand:</label>
+            <input type="text" class="form-control" id="brand" name="brand" required>
+        </div>
+        <div class="form-group">
+            <label for="model_name">Model:</label>
+            <input type="text" class="form-control" id="model_name" name="model_name" required>
+        </div>
+        <div class="form-group">
+            <label for="year">Year:</label>
+            <input type="number" class="form-control" id="year" name="year" required>
+        </div>
+        <div class="form-group">
+            <label for="mileage">Mileage (KM):</label>
+            <input type="text" class="form-control" id="mileage" name="mileage" required>
+        </div>
+        <div class="form-group">
+            <label for="condition">Condition:</label>
+            <input type="text" class="form-control" id="condition" name="condition" required>
+        </div>
+        <div class="form-group">
+            <label for="price_per_hour">Price per Hour (RM):</label>
+            <input type="text" class="form-control" id="price_per_hour" name="price_per_hour" required>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="available" name="available" value="true">
+            <label class="form-check-label" for="available">Available</label>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Add Car</button>
+    </form>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

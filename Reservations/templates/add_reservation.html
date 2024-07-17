@@ -1,0 +1,114 @@
+<!-- rental/templates/add_reservation.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Reservation</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="{% url 'homepage' %}">Car Rental</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        
+        <ul class="navbar-nav ml-auto">
+            {% if request.user.is_superuser %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'manage_cars' %}">Manage Cars</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'view_reservations' %}">View Reservations</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <form method="post" action="{% url 'logout' %}" class="form-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">Logout</button>
+                </form>
+            </li>
+        </ul>
+        
+    </div>
+</nav>
+<div class="container">
+    <h2>Add Reservation</h2>
+    <form method="post" id="addReservationForm">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary mt-3">Add Reservation</button>
+    </form>
+
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+// jQuery for calculating total price based on selected car's price_per_hour
+$(document).ready(function() {
+    let pricePerHour = 0
+    $('#id_car').change(function() {
+        var carId = $(this).val();
+        if (carId) {
+            $.ajax({
+                url: '/api/get_car_price/',  // Replace with your Django view URL to fetch car details
+                type: 'GET',
+                data: {
+                    'car_id': carId
+                },
+                success: function(response) {
+                    if (response && response.price_per_hour) {
+                        pricePerHour = parseFloat(response.price_per_hour);
+                        console.log(pricePerHour)
+                    } else {
+                        console.log('Error: Unable to fetch car price.');
+                    }
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log('Error: ' + xhr.status + ': ' + xhr.responseText);
+                }
+            });
+        }
+    });
+
+    $('#id_start_date, #id_end_date').change(function() {
+        updateDuration();
+    })
+
+    // Function to calculate duration in hours between start and end dates
+    function calculateDurationHours(startDate, endDate) {
+        var start = new Date(startDate);
+        var end = new Date(endDate);
+        var diff = Math.abs(end - start);  // Difference in milliseconds
+        var hours = diff / (1000 * 60 * 60);  // Convert milliseconds to hours
+        return hours;
+    }
+
+    // Function to update duration field based on start and end dates
+    function updateDuration() {
+        var startDate = $('#id_start_date').val();
+        var endDate = $('#id_end_date').val();
+        
+        if (startDate && endDate) {
+            var durationHours = calculateDurationHours(startDate, endDate);
+            $('#id_period').val(durationHours.toFixed(2)); // Display duration in hours with 2 decimal places
+        } else {
+            $('#id_period').val(''); // Clear duration if either start or end date is not selected
+        }
+
+        $('#id_total_price').val($('#id_period').val()*pricePerHour)
+    }
+
+});
+</script>
+
+</body>
+</html>

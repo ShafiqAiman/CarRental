@@ -1,0 +1,19 @@
+#database config
+**/db__conn.py
+
+#django specific
+**/__pycache__
+__pycache__/
+
+#Media
+media
+
+#migrations
+**/migrations/*
+!**/migrations/__init__.py
+
+#virtual environment
+venv
+
+#env variables
+.env
